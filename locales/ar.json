@@ -1,0 +1,10 @@
+{
+  "brand": "منصة الإيمان",
+  "links": [
+    { "name": "الرئيسية", "href": "/" },
+    { "name": "من نحن", "href": "/about" },
+    { "name": "الخدمات", "href": "/services" },
+    { "name": "اتصل بنا", "href": "/contact" }
+  ],
+  "button": "ابدأ الآن"
+}

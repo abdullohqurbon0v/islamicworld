@@ -1,0 +1,10 @@
+{
+  "brand": "Платформа Иман",
+  "links": [
+    { "name": "Главная", "href": "/" },
+    { "name": "О нас", "href": "/about" },
+    { "name": "Услуги", "href": "/services" },
+    { "name": "Контакты", "href": "/contact" }
+  ],
+  "button": "Начать"
+}

@@ -1,0 +1,10 @@
+{
+  "brand": "Imon Platformasi",
+  "links": [
+    { "name": "Bosh sahifa", "href": "/" },
+    { "name": "Biz haqimizda", "href": "/about" },
+    { "name": "Xizmatlar", "href": "/services" },
+    { "name": "Bog'lanish", "href": "/contact" }
+  ],
+  "button": "Boshlash"
+}
