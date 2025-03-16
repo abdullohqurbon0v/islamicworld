@@ -45,7 +45,7 @@ const MainPage = () => {
   const getNamazTimes = async (city: string) => {
     try {
       const res = await axios.get(
-        `http://api.aladhan.com/v1/timingsByCity?city=${city}&country=Uzbekistan&method=2`
+        `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Uzbekistan&method=2`
       );
       const timings = res.data.data.timings;
       const adaptedData: NamazTimes = {
