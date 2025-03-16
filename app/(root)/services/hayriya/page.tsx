@@ -12,28 +12,27 @@ const CharityPage = () => {
   const [donorName, setDonorName] = useState("");
   const [selectedCause, setSelectedCause] = useState("");
 
-  // Sample charity causes
   const causes = [
     {
       id: 1,
       title: "Masjid Qurilishi",
       description: "Yangi masjid qurish uchun yordam bering.",
-      goal: 50000000, // 50 million UZS
-      raised: 32000000, // 32 million UZS
+      goal: 50000000,
+      raised: 32000000,
     },
     {
       id: 2,
       title: "Ehtiyojmand Oilalar",
       description: "Yetimlar va kam ta‘minlangan oilalarga yordam.",
-      goal: 30000000, // 30 million UZS
-      raised: 18000000, // 18 million UZS
+      goal: 30000000,
+      raised: 18000000,
     },
     {
       id: 3,
       title: "Ta‘lim uchun Kitoblar",
       description: "Talabalarga islomiy kitoblar sotib olish.",
-      goal: 20000000, // 20 million UZS
-      raised: 15000000, // 15 million UZS
+      goal: 20000000,
+      raised: 15000000,
     },
   ];
 
@@ -43,7 +42,6 @@ const CharityPage = () => {
       alert("Iltimos, xayriya miqdorini va maqsadni tanlang!");
       return;
     }
-    // Здесь можно добавить логику для отправки данных на сервер
     console.log({
       donorName,
       amount: donationAmount,
@@ -59,7 +57,6 @@ const CharityPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      {/* Hero Section */}
       <section className="bg-emerald-900 text-white py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold font-[ArabicFont] tracking-tight">
@@ -71,8 +68,6 @@ const CharityPage = () => {
           </p>
         </div>
       </section>
-
-      {/* Donation Form */}
       <section className="max-w-7xl mx-auto mt-12">
         <Card className="bg-emerald-50 shadow-lg border border-emerald-200">
           <CardHeader>
@@ -149,8 +144,6 @@ const CharityPage = () => {
           </CardContent>
         </Card>
       </section>
-
-      {/* Charity Causes */}
       <section className="max-w-7xl mx-auto mt-12">
         <h2 className="text-3xl font-bold text-emerald-900 font-[ArabicFont] text-center mb-8">
           Yordam Maqsadlari
@@ -197,16 +190,14 @@ const CharityPage = () => {
           })}
         </div>
       </section>
-
-      {/* Call to Action */}
       <section className="bg-emerald-900 text-white py-16 px-4 mt-12">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-3xl font-bold font-[ArabicFont] mb-4">
             Har Bir Yordamingiz Muhim
           </h2>
           <p className="text-lg text-gray-200 mb-6">
-            "Kim biror yaxshilik qilsa, unga o‘n barobar savob beriladi."
-            (An‘om, 160)
+            &quot;Kim biror yaxshilik qilsa, unga o‘n barobar savob
+            beriladi.&quot; (An‘om, 160)
           </p>
           <Button
             size="lg"
