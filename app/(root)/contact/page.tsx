@@ -114,7 +114,7 @@ const ContactPage = () => {
                       href="mailto:support@imonplatform.uz"
                       className="text-emerald-600 hover:underline"
                     >
-                      support@imonplatform.uz
+                      abdullohqurnobov@gmail.com
                     </a>
                   </div>
                 </div>
@@ -126,7 +126,7 @@ const ContactPage = () => {
                       href="tel:+998901234567"
                       className="text-emerald-600 hover:underline"
                     >
-                      +998 90 123 45 67
+                      +998 91 600 83 00
                     </a>
                   </div>
                 </div>

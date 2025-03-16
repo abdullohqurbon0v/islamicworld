@@ -48,6 +48,7 @@ const MainPage = () => {
         { name: "Hufton", time: data.times.hufton },
       ]
     : [];
+
   useEffect(() => {
     if (!data) return;
 
