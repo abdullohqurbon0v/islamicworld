@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Heart, DollarSign, Users, Mosque } from "lucide-react";
+import { Heart, DollarSign, Users, Moon } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 const CharityPage = () => {
@@ -56,10 +56,10 @@ const CharityPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 text-gray-900 py-12 ">
       <section className="bg-emerald-900 text-white py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold font-[ArabicFont] tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold  tracking-tight">
             Xayriya Yordami
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-200">
@@ -71,7 +71,7 @@ const CharityPage = () => {
       <section className="max-w-7xl mx-auto mt-12">
         <Card className="bg-emerald-50 shadow-lg border border-emerald-200">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-emerald-900 font-[ArabicFont] flex items-center">
+            <CardTitle className="text-2xl font-bold text-emerald-900  flex items-center">
               <Heart className="mr-2 h-6 w-6" /> Xayriya Qilish
             </CardTitle>
           </CardHeader>
@@ -80,7 +80,7 @@ const CharityPage = () => {
               <div>
                 <label
                   htmlFor="donorName"
-                  className="block text-sm font-medium text-gray-700 font-[ArabicFont]"
+                  className="block text-sm font-medium text-gray-700 "
                 >
                   Ismingiz (ixtiyoriy)
                 </label>
@@ -96,7 +96,7 @@ const CharityPage = () => {
               <div>
                 <label
                   htmlFor="amount"
-                  className="block text-sm font-medium text-gray-700 font-[ArabicFont]"
+                  className="block text-sm font-medium text-gray-700 "
                 >
                   Xayriya Miqdori (UZS)
                 </label>
@@ -116,7 +116,7 @@ const CharityPage = () => {
               <div>
                 <label
                   htmlFor="cause"
-                  className="block text-sm font-medium text-gray-700 font-[ArabicFont]"
+                  className="block text-sm font-medium text-gray-700 "
                 >
                   Xayriya Maqsadi
                 </label>
@@ -145,7 +145,7 @@ const CharityPage = () => {
         </Card>
       </section>
       <section className="max-w-7xl mx-auto mt-12">
-        <h2 className="text-3xl font-bold text-emerald-900 font-[ArabicFont] text-center mb-8">
+        <h2 className="text-3xl font-bold text-emerald-900  text-center mb-8">
           Yordam Maqsadlari
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -157,9 +157,9 @@ const CharityPage = () => {
                 className="bg-white shadow-md border border-emerald-200"
               >
                 <CardHeader>
-                  <CardTitle className="text-lg font-semibold text-emerald-700 font-[ArabicFont] flex items-center">
+                  <CardTitle className="text-lg font-semibold text-emerald-700  flex items-center">
                     {cause.title === "Masjid Qurilishi" ? (
-                      <Mosque className="mr-2 h-5 w-5" />
+                      <Moon className="mr-2 h-5 w-5" />
                     ) : (
                       <Users className="mr-2 h-5 w-5" />
                     )}
@@ -179,7 +179,7 @@ const CharityPage = () => {
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                    className="w-full border-emerald-600 cursor-pointer text-emerald-600 hover:bg-emerald-600 hover:text-white"
                     onClick={() => setSelectedCause(cause.title)}
                   >
                     Tanlash
@@ -192,7 +192,7 @@ const CharityPage = () => {
       </section>
       <section className="bg-emerald-900 text-white py-16 px-4 mt-12">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold font-[ArabicFont] mb-4">
+          <h2 className="text-3xl font-bold  mb-4">
             Har Bir Yordamingiz Muhim
           </h2>
           <p className="text-lg text-gray-200 mb-6">
