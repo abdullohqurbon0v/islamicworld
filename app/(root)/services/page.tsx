@@ -76,6 +76,7 @@ const ServicesPage = () => {
                 </p>
                 <Button
                   variant="outline"
+                  onClick={() => router.push("/services/hayriya")}
                   className="border-emerald-600 absolute top-[95%] left-[95%] -translate-2/2 -translate-y-2/2 cursor-pointer text-emerald-600 hover:bg-emerald-600 hover:text-white"
                 >
                   Batafsil

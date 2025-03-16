@@ -154,7 +154,7 @@ const MainPage = () => {
     <div className="min-h-screen bg-gray-100 text-gray-900 mt-16">
       <section className="bg-emerald-900 text-white py-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold font-[ArabicFont] tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold  tracking-tight">
             Xush kelibsiz Imon Platformasiga
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-200">
@@ -172,7 +172,7 @@ const MainPage = () => {
 
       <section className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-emerald-900 font-[ArabicFont] text-center mb-8">
+          <h2 className="text-3xl font-bold text-emerald-900  text-center mb-8">
             Namoz Vaqtlari
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4">
@@ -197,7 +197,7 @@ const MainPage = () => {
           <div className="mt-8 text-center">
             <Card className="max-w-md mx-auto bg-emerald-50 shadow-md border border-emerald-200">
               <CardContent className="py-4">
-                <p className="text-lg font-semibold text-emerald-900 font-[ArabicFont]">
+                <p className="text-lg font-semibold text-emerald-900 ">
                   Keyingi Namoz: {nextPrayer}
                 </p>
                 <p className="text-3xl font-bold text-gray-800 mt-2">
@@ -211,12 +211,12 @@ const MainPage = () => {
 
       <section className="bg-emerald-50 py-12 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-emerald-900 font-[ArabicFont] mb-6">
+          <h2 className="text-3xl font-bold text-emerald-900  mb-6">
             Qur‘ondan Bir Oyat
           </h2>
           <Card className="max-w-2xl mx-auto bg-white shadow-lg border border-emerald-200">
             <CardContent className="py-6">
-              <p className="text-xl text-gray-800 font-[ArabicFont] leading-relaxed">
+              <p className="text-xl text-gray-800  leading-relaxed">
                 &quot;Аллоҳ сабр қилувчилар билан биргадир.&quot; (Бақара, 153)
               </p>
               <p className="mt-4 text-gray-600">
@@ -229,7 +229,7 @@ const MainPage = () => {
 
       <section className="py-12 px-4 bg-amber-50">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-amber-900 font-[ArabicFont] mb-6">
+          <h2 className="text-3xl font-bold text-amber-900  mb-6">
             Xayrli Ishlarga Yordam Boring
           </h2>
           <p className="text-lg text-gray-700 mb-6">
@@ -247,9 +247,7 @@ const MainPage = () => {
 
       <section className="bg-emerald-900 text-white py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold font-[ArabicFont] mb-4">
-            Islomiy Bilimlar
-          </h2>
+          <h2 className="text-3xl font-bold  mb-4">Islomiy Bilimlar</h2>
           <p className="text-lg text-gray-200 mb-6">
             Qur‘on, Hadis va fiqh bo‘yicha ma‘lumotlarni o‘rganing.
           </p>
