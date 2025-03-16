@@ -48,31 +48,27 @@ const MainPage = () => {
         { name: "Hufton", time: data.times.hufton },
       ]
     : [];
-
-  // Countdown logic
   useEffect(() => {
     if (!data) return;
 
     const updateCountdown = () => {
       const now = new Date();
-      const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
+      const currentTime = now.getHours() * 60 + now.getMinutes();
 
       const prayerTimesInMinutes = prayerTimes.map((prayer) => {
         const [hours, minutes] = prayer.time.split(":").map(Number);
         return { name: prayer.name, minutes: hours * 60 + minutes };
       });
-
-      // Find the next prayer
       const next =
         prayerTimesInMinutes.find((prayer) => prayer.minutes > currentTime) ||
-        prayerTimesInMinutes[0]; // If no next prayer today, use tomorrow's Bomdod
+        prayerTimesInMinutes[0];
 
       setNextPrayer(next.name);
 
       const timeDiffMinutes =
         next.minutes > currentTime
           ? next.minutes - currentTime
-          : 1440 - currentTime + next.minutes; // Handle midnight crossover
+          : 1440 - currentTime + next.minutes;
 
       const hoursLeft = Math.floor(timeDiffMinutes / 60);
       const minutesLeft = timeDiffMinutes % 60;
@@ -86,8 +82,8 @@ const MainPage = () => {
     };
 
     updateCountdown();
-    const interval = setInterval(updateCountdown, 1000); // Update every second
-    return () => clearInterval(interval); // Cleanup on unmount
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
   }, [data]);
 
   if (!data) {
@@ -95,7 +91,7 @@ const MainPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900">
+    <div className="min-h-screen bg-gray-100 text-gray-900 mt-16">
       <section className="bg-emerald-900 text-white py-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold  tracking-tight">
