@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, Book, Heart } from "lucide-react";
+import { Clock, Book, Heart, Gamepad2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const ServicesPage = () => {
@@ -78,6 +78,55 @@ const ServicesPage = () => {
                   variant="outline"
                   onClick={() => router.push("/services/hayriya")}
                   className="border-emerald-600 absolute top-[95%] left-[95%] -translate-2/2 -translate-y-2/2 cursor-pointer text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                >
+                  Batafsil
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+      <section className="py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-emerald-900  text-center mb-8">
+            Bizning O‘yinlarimiz
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="bg-white shadow-md border border-emerald-200 relative h-64">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-emerald-700 flex items-center">
+                  <Gamepad2 className="mr-2 h-6 w-6" /> Qur‘on Vikto‘rinasi
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700 mb-4">
+                  Qur‘on oyatlari va ma‘nolari bo‘yicha savollarga javob bering
+                  va bilimingizni sinab ko‘ring.
+                </p>
+                <Button
+                  variant="outline"
+                  className="border-emerald-600 text-emerald-600 absolute top-[95%] left-[95%] -translate-x-2/2 -translate-y-2/2 cursor-pointer hover:bg-emerald-600 hover:text-white"
+                  onClick={() => router.push("/services/games/viktorina")}
+                >
+                  Batafsil
+                </Button>
+              </CardContent>
+            </Card>
+            <Card className="bg-white shadow-md border border-emerald-200 relative h-64">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-emerald-700 flex items-center">
+                  <Gamepad2 className="mr-2 h-6 w-6" /> Islomiy So‘zlar
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700 mb-4">
+                  Islomiy atamalarni taxmin qiling va har bir so‘zning ma‘nosini
+                  o‘rganing.
+                </p>
+                <Button
+                  variant="outline"
+                  className="border-emerald-600 text-emerald-600 absolute top-[95%] left-[95%] -translate-x-2/2 -translate-y-2/2 cursor-pointer hover:bg-emerald-600 hover:text-white"
+                  onClick={() => router.push("/services/games/islam-words")}
                 >
                   Batafsil
                 </Button>
