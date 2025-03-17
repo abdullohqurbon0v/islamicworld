@@ -32,9 +32,11 @@ const MainPage = () => {
   const [address, setAddress] = useState<string>("Toshkent");
   const [loading, setLoading] = useState(true);
 
+  console.log(data);
   const prayerTimes = data
     ? [
         { name: "Bomdod", time: data.times.tong_saharlik },
+        { name: "Quyosh", time: data.times.quyosh },
         { name: "Peshin", time: data.times.peshin },
         { name: "Asr", time: data.times.asr },
         { name: "Shom", time: data.times.shom_iftor },

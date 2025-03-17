@@ -53,7 +53,7 @@ const Navbar = () => {
             <LanguageChanger />
             <Button
               variant="outline"
-              className="border-amber-300 text-white hover:bg-amber-300 hover:text-emerald-900"
+              className="border-amber-300 text-black hover:bg-amber-300 hover:text-emerald-900"
               asChild
             >
               <Link href="/signin">Kirish</Link>
@@ -99,7 +99,7 @@ const Navbar = () => {
                     <LanguageChanger />
                     <Button
                       variant="outline"
-                      className="w-full border-amber-300 text-white hover:bg-amber-300 hover:text-emerald-900"
+                      className="w-full border-amber-300 text-black hover:bg-amber-300 hover:text-emerald-900"
                       asChild
                     >
                       <Link href="/signin" onClick={() => setIsOpen(false)}>
