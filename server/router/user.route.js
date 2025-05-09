@@ -4,7 +4,7 @@ const authMiddleware = require("../middlewares/auth");
 const router = require("express").Router();
 
 // GET
-router.get("/get", authMiddleware, userController.getUser);
+router.get("/profile", authMiddleware, userController.getUser);
 
 // POST
 router.post("/login", userController.login);
