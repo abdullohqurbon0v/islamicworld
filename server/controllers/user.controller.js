@@ -8,20 +8,19 @@ class UserController {
   async create(req, res) {
     try {
       const { lang = "en" } = req.query;
-      const { fullName, email, phone, password } = req.body;
+      const { fullName, email, phone, password, role } = req.body;
 
       const existingUser = await userModel.findOne({ email });
       if (existingUser) {
         return res.status(400).json({
           message:
-            translates.user.create.emailExist[lang] || "Email already exists",
+             "Email manzil boshqa foydalanuvchi tomonidan bant qilingan",
           error: true,
         });
       }
       if (!password || password.length < 8) {
         return res.status(400).json({
           message:
-            translates.user.create.passwordShort[lang] ||
             "Password must be at least 8 characters",
           error: true,
         });
@@ -33,8 +32,8 @@ class UserController {
         phone,
         email,
         password: hashedPassword,
+        role
       });
-      console.log(createdUser);
       const userDto = new UserDto(createdUser);
       const token = tokenUtil(userDto);
 
@@ -46,7 +45,7 @@ class UserController {
     } catch (error) {
       console.error("Error in user creation:", error);
       return res.status(500).json({
-        message: "Something went wrong",
+        message: "Serverda hatolik yuz berdi. Iltimos keginroq urunib koring",
         error: true,
       });
     }
@@ -55,12 +54,11 @@ class UserController {
   async login(req, res) {
     try {
       const { email, password } = req.body;
-      const { lang = "en" } = req.query;
 
       const userExist = await userModel.findOne({ email });
       if (!userExist) {
         return res.status(400).json({
-          message: translates.user.create.emailExist[lang],
+          message: "Ushu emaildagi foydalanuvchi mavjud emas",
           error: true,
         });
       }
@@ -70,7 +68,7 @@ class UserController {
       );
       if (!passwordCompare) {
         return res.status(400).json({
-          message: translates.user.login.incorrectPassword[lang],
+          message: "Parolingiz hato",
           error: true,
         });
       }

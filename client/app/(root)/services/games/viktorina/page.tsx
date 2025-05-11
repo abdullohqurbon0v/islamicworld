@@ -1,199 +1,198 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { BookOpen, CheckCircle, XCircle } from "lucide-react";
+import { $axios } from "@/api/axios";
+import Loading from "@/app/(root)/_components/ui/loading";
+import { useEffect, useState } from "react";
 
-interface Question {
-  question: string;
-  options: string[];
-  correctAnswer: string;
+interface QuestionType {
+    answers: string[];
+    correctAnswer: string;
+    createdAt: Date;
+    difficulty: string;
+    question: string;
+    updatedAt: Date;
+    _id: string;
+}
+
+interface QuestionResponse {
+    message: string;
+    question: QuestionType;
+}
+
+interface AnswerResponse {
+    message: string;
+    correct: boolean;
+}
+
+function shuffleArray<T>(array: T[]): T[] {
+    return [...array].sort(() => Math.random() - 0.5);
 }
 
 const QuranViktorinaPage = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [score, setScore] = useState(0);
-  const [showResult, setShowResult] = useState(false);
-  const [quizCompleted, setQuizCompleted] = useState(false);
+    const [question, setQuestion] = useState<QuestionType | null>(null);
+    const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
+    const [questionIdx, setQuestionIdx] = useState(1);
+    const [disabled, setDisabled] = useState(false);
+    const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+    const [correctAnswerShown, setCorrectAnswerShown] = useState(false);
+    const [gameOver, setGameOver] = useState(false);
 
-  // Sample questions
-  const questions: Question[] = [
-    {
-      question: "Qur‘onda nechta sura mavjud?",
-      options: ["110", "114", "120", "99"],
-      correctAnswer: "114",
-    },
-    {
-      question: "‘Fotiha’ surasi Qur‘onning nechanchi surasi?",
-      options: ["1", "2", "5", "10"],
-      correctAnswer: "1",
-    },
-    {
-      question: "‘Baqara’ so‘zi nimani anglatadi?",
-      options: ["Sigir", "Ot", "Tuyoq", "Qush"],
-      correctAnswer: "Sigir",
-    },
-    {
-      question: "Qur‘on necha yilda nozil bo‘lgan?",
-      options: ["10", "15", "23", "30"],
-      correctAnswer: "23",
-    },
-    {
-      question: "‘Al-Falaq’ surasi qanday boshlanadi?",
-      options: [
-        "Qul a‘uzu birabbil-falaq",
-        "Qul hu wallohu ahad",
-        "Qul a‘uzu birabbin-nas",
-        "Alhamdu lillahi rabbil ‘alamin",
-      ],
-      correctAnswer: "Qul a‘uzu birabbil-falaq",
-    },
-  ];
+    useEffect(() => {
+        const getQuestion = async () => {
+            try {
+                const difficulty =
+                    questionIdx <= 4
+                        ? "easy"
+                        : questionIdx <= 8
+                            ? "medium"
+                            : "hard";
 
-  const handleAnswerSubmit = () => {
-    if (selectedAnswer === null) {
-      alert("Iltimos, javobni tanlang!");
-      return;
+                const res = await $axios.get<QuestionResponse>(
+                    `/question/get?difficult=${difficulty}`
+                );
+
+                setQuestion(res.data.question);
+                setShuffledAnswers(shuffleArray(res.data.question.answers));
+                setSelectedAnswer('');
+                setDisabled(false);
+                setCorrectAnswerShown(false);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        if (!gameOver) {
+            getQuestion();
+        }
+    }, [questionIdx, gameOver]);
+
+    async function onSelectAnswer(answer: string) {
+        setDisabled(true);
+        setSelectedAnswer(answer);
+
+        try {
+            const res = await $axios.post<AnswerResponse>(`/question/check-answer/${question?._id}`, {
+                answer
+            });
+
+            setTimeout(() => {
+                setCorrectAnswerShown(true);
+
+                if (res.data.correct) {
+                    setTimeout(() => {
+                        setQuestionIdx(prev => prev + 1);
+                    }, 1500);
+                } else {
+                    setTimeout(() => {
+                        setGameOver(true);
+                    }, 2000);
+                }
+            }, 1000);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const isCorrect =
-      selectedAnswer === questions[currentQuestion].correctAnswer;
-    if (isCorrect) {
-      setScore(score + 1);
-    }
-    setShowResult(true);
-  };
-
-  const handleNextQuestion = () => {
-    setSelectedAnswer(null);
-    setShowResult(false);
-    if (currentQuestion + 1 < questions.length) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      setQuizCompleted(true);
-    }
-  };
-
-  const handleRestart = () => {
-    setCurrentQuestion(0);
-    setSelectedAnswer(null);
-    setScore(0);
-    setShowResult(false);
-    setQuizCompleted(false);
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 py-12 ">
-      <section className="bg-emerald-900 text-white py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold  tracking-tight">
-            Qur‘on Vikto‘rinasi
-          </h1>
-          <p className="mt-4 text-lg md:text-xl text-gray-200">
-            Qur‘on oyatlari va ma‘nolari bo‘yicha savollarga javob bering va
-            bilimingizni sinab ko‘ring.
-          </p>
-        </div>
-      </section>
-
-      {/* Quiz Section */}
-      <section className="max-w-3xl mx-auto mt-12">
-        <Card className="bg-white shadow-lg border border-emerald-200">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-emerald-900  flex items-center">
-              <BookOpen className="mr-2 h-6 w-6" /> Savol {currentQuestion + 1}{" "}
-              / {questions.length}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {!quizCompleted ? (
-              <>
-                <p className="text-lg text-gray-800 ">
-                  {questions[currentQuestion].question}
-                </p>
-                <RadioGroup
-                  value={selectedAnswer || ""}
-                  onValueChange={setSelectedAnswer}
-                  className="space-y-4"
-                  disabled={showResult}
-                >
-                  {questions[currentQuestion].options.map((option, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={`option-${index}`} />
-                      <Label
-                        htmlFor={`option-${index}`}
-                        className="text-gray-700 cursor-pointer"
-                      >
-                        {option}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-
-                {!showResult ? (
-                  <Button
-                    onClick={handleAnswerSubmit}
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white border border-amber-500/50"
-                  >
-                    Javobni Tekshirish
-                  </Button>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-center gap-2">
-                      {selectedAnswer ===
-                      questions[currentQuestion].correctAnswer ? (
-                        <CheckCircle className="h-6 w-6 text-emerald-600" />
-                      ) : (
-                        <XCircle className="h-6 w-6 text-red-600" />
-                      )}
-                      <p className="text-lg font-semibold text-gray-800">
-                        {selectedAnswer ===
-                        questions[currentQuestion].correctAnswer
-                          ? "To‘g‘ri!"
-                          : `Noto‘g‘ri. To‘g‘ri javob: ${questions[currentQuestion].correctAnswer}`}
-                      </p>
-                    </div>
-                    <Button
-                      onClick={handleNextQuestion}
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500/50"
+    if (gameOver) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-red-100 text-center">
+                <div className="bg-white p-8 rounded-2xl shadow-lg">
+                    <h2 className="text-3xl font-bold text-red-600">O‘yin tugadi</h2>
+                    <p className="mt-4 text-gray-700">Afsuski, siz noto‘g‘ri javob berdingiz.</p>
+                    <button
+                        onClick={() => {
+                            setQuestionIdx(1);
+                            setGameOver(false);
+                        }}
+                        className="mt-6 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl transition"
                     >
-                      {currentQuestion + 1 === questions.length
-                        ? "Tugatish"
-                        : "Keyingi Savol"}
-                    </Button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center space-y-6">
-                <h3 className="text-2xl font-bold text-emerald-900 ">
-                  Viktorina Yakunlandi!
-                </h3>
-                <p className="text-lg text-gray-700">
-                  Sizning natijangiz: {score} / {questions.length}
-                </p>
-                <p className="text-gray-600">
-                  {score === questions.length
-                    ? "Ajoyib! Siz hamma savolga to‘g‘ri javob berdingiz."
-                    : "Yaxshi harakat! Yana sinab ko‘ring va bilimingizni oshiring."}
-                </p>
-                <Button
-                  onClick={handleRestart}
-                  className="bg-amber-600 hover:bg-amber-700 text-white border border-amber-500/50"
-                >
-                  Qaytadan Boshlash
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </section>
-    </div>
-  );
+                        Qayta boshlash
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!question) {
+        return <Loading />;
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-100 text-gray-900 py-12">
+            <section className="bg-emerald-900 text-white py-16 px-4">
+                <div className="max-w-7xl mx-auto text-center">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+                        Qur‘on Vikto‘rinasi
+                    </h1>
+                    <p className="mt-4 text-lg md:text-xl text-gray-200">
+                        Qur‘on oyatlari va ma‘nolari bo‘yicha savollarga javob bering va bilimingizni sinab ko‘ring.
+                    </p>
+                </div>
+            </section>
+
+            <section className="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-green-500 to-emerald-700 rounded-t-2xl"></div>
+
+                <div className="flex justify-between items-center mb-4 text-sm text-gray-600">
+                    <span>
+                        Qiyinchilik:{" "}
+                        <span className="font-semibold text-emerald-700 capitalize">{question.difficulty}</span>
+                    </span>
+                    <span>
+                        Savol:{" "}
+                        <span className="font-semibold text-yellow-600">{questionIdx}/15</span>
+                    </span>
+                </div>
+
+                <div className="mb-6">
+                    <h2 className="text-xl md:text-2xl font-semibold text-emerald-900">{questionIdx}-savol:</h2>
+                    <p className="mt-2 text-lg text-gray-800">{question.question}</p>
+                </div>
+
+                <div className="grid gap-4">
+                    {shuffledAnswers.map((answer, idx) => {
+                        const isSelected = selectedAnswer === answer;
+                        const isCorrect = correctAnswerShown && answer === question.correctAnswer;
+
+                        let baseClasses = "w-full text-left px-4 py-3 rounded-xl transition-all duration-200 ";
+                        let classes = "";
+
+                        if (disabled) {
+                            if (isCorrect) {
+                                classes = "bg-green-100 border border-green-400 text-green-800";
+                            } else if (isSelected && !isCorrect) {
+                                classes = "bg-red-100 border border-red-400 text-red-800";
+                            } else {
+                                classes = "bg-gray-100 border border-gray-200 text-gray-500";
+                            }
+                        } else {
+                            classes = "bg-gray-50 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-400";
+                        }
+
+                        return (
+                            <button
+                                key={idx}
+                                onClick={() => onSelectAnswer(answer)}
+                                disabled={disabled}
+                                className={`${baseClasses} ${classes}`}
+                            >
+                                {answer}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <div className="mt-6">
+                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-emerald-500 transition-all"
+                            style={{ width: `${(questionIdx / 15) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
 };
 
 export default QuranViktorinaPage;

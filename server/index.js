@@ -4,12 +4,14 @@ const { default: mongoose } = require("mongoose");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const userRouter = require("./router/user.route");
+const questionRouter = require('./router/questions.route')
 const cors = require('cors')
 app.use(express.json());
 app.use(cors({
     origin: "*"
 }))
 app.use("/api/user", userRouter);
+app.use('/api/question',questionRouter)
 
 app.listen(PORT, () => {
   mongoose

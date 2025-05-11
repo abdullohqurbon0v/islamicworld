@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import { Book, Clock, Heart } from "lucide-react";
 import { useEffect, useState } from "react";
-import Loading from "./_components/loading";
+import Loading from "./_components/ui/loading";
 
 interface NamazTimes {
     date: string;

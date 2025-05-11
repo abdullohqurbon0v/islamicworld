@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Lock, Mail, Phone, User } from "lucide-react";
+import { useUserStore } from "@/store/user-store";
+import { UserType } from "@/types";
+import { Eye, EyeOff, Loader2, Lock, Mail, Phone, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -27,14 +29,6 @@ interface FormErrors {
     confirmPassword?: string;
 }
 
-interface UserType {
-    id: string,
-    createdAt: Date
-    email: string
-    fullName: string
-    phone: string
-}
-
 interface SignUpErrorResponse {
     response?: {
         data: {
@@ -45,13 +39,12 @@ interface SignUpErrorResponse {
 }
 
 interface SignUpSuccessResponse {
-    token: string
-    user: UserType
-
+    token: string;
+    user: UserType;
 }
 
-
 const SignUpPage = () => {
+    const { setUser, setToken } = useUserStore();
     const [formData, setFormData] = useState<FormData>({
         fullname: "",
         email: "",
@@ -62,9 +55,9 @@ const SignUpPage = () => {
     const [errors, setErrors] = useState<FormErrors>({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [agreeTerms, setAgreeTerms] = useState(false);
+    const [agreeToTerms, setAgreeToTerms] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter()
+    const router = useRouter();
 
     const formatPhoneNumber = (value: string): string => {
         const digits = value.replace(/\D/g, "");
@@ -81,7 +74,7 @@ const SignUpPage = () => {
     const validateForm = (): FormErrors => {
         const newErrors: FormErrors = {};
 
-        if (formData.fullname.length < 2) {
+        if (formData.fullname.trim().length < 2) {
             newErrors.fullname = "Ism kamida 2 harfdan iborat bo'lishi kerak";
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -90,17 +83,16 @@ const SignUpPage = () => {
         if (!/^\+998-\d{2}-\d{3}-\d{2}-\d{2}$/.test(formData.phone)) {
             newErrors.phone = "Yaroqli telefon raqamini kiriting (+998-91-600-83-00)";
         }
-
-        if (formData.password.length < 6) {
-            newErrors.password = "Parol kamida 6 belgidan iborat bo'lishi kerak";
+        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(formData.password)) {
+            newErrors.password = "Parol kamida 6 belgi, 1 harf va 1 raqamdan iborat bo'lishi kerak";
         }
-
         if (formData.password !== formData.confirmPassword) {
             newErrors.confirmPassword = "Parollar mos kelmaydi";
         }
 
         return newErrors;
     };
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         if (name === "phone") {
@@ -109,9 +101,11 @@ const SignUpPage = () => {
         } else {
             setFormData((prev) => ({ ...prev, [name]: value }));
         }
+        setErrors((prev) => ({ ...prev, [name]: undefined }));
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         const validationErrors = validateForm();
         setErrors(validationErrors);
 
@@ -119,7 +113,7 @@ const SignUpPage = () => {
             return;
         }
 
-        if (!agreeTerms) {
+        if (!agreeToTerms) {
             toast.error("Xatolik", {
                 description: "Foydalanish shartlariga rozilik bildiring",
             });
@@ -129,26 +123,24 @@ const SignUpPage = () => {
         setIsLoading(true);
         try {
             const response = await $axios.post<SignUpSuccessResponse>("/user/create", {
-                fullName: formData.fullname,
-                email: formData.email,
+                fullName: formData.fullname.trim(),
+                email: formData.email.trim(),
                 phone: formData.phone,
                 password: formData.password,
-            })
-            localStorage.setItem('token', response.data.token)
-            if (response.status == 201) {
-                throw new Error("Ro'yxatdan o'tishda xatolik yuz berdi");
-            }
-
+            });
+            localStorage.setItem("token", response.data.token);
             toast.success("Muvaffaqiyat", {
                 description: "Ro'yxatdan muvaffaqiyatli o'tdingiz! Emailingizni tasdiqlang.",
             });
-
+            setUser(response.data.user);
+            setToken(response.data.token);
             setTimeout(() => {
-                router.push('/')
-            }, 2000);
+                router.push("/");
+            }, 1000);
         } catch (error) {
             const errorMessage =
-                (error as SignUpErrorResponse).response?.data?.message || (error instanceof Error ? error.message : "Nimadir xato ketdi");
+                (error as SignUpErrorResponse).response?.data?.message ||
+                (error instanceof Error ? error.message : "Nimadir xato ketdi");
             toast.error("Xatolik", {
                 description: errorMessage,
             });
@@ -159,15 +151,7 @@ const SignUpPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-emerald-900 z-0">
-                <div
-                    className="w-full h-full bg-cover bg-center"
-                    style={{
-                        backgroundImage:
-                            "url('https://img.goodfon.com/original/7680x4320/d/64/pattern-islamic-pattern-ramadan-mosque.jpg')",
-                    }}
-                ></div>
-            </div>
+            <div className="absolute inset-0 z-0 animate-gradient-bg bg-[length:200%_200%] bg-gradient-to-r from-green-800 via-green-500 to-blue-900 opacity-50"></div>
             <div className="relative z-10 max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card className="bg-white shadow-xl border border-emerald-200">
                     <CardHeader>
@@ -175,189 +159,191 @@ const SignUpPage = () => {
                             Ro‘yxatdan O‘tish
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="space-y-4">
-                            <div>
-                                <label
-                                    htmlFor="fullname"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    To‘liq Ism
-                                </label>
-                                <div className="relative">
-                                    <Input
-                                        id="fullname"
-                                        name="fullname"
-                                        type="text"
-                                        placeholder="Ism va familiyangiz"
-                                        className="mt-1 pl-10"
-                                        value={formData.fullname}
-                                        onChange={handleInputChange}
-                                    />
-                                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-4">
+                                <div>
+                                    <label htmlFor="fullname" className="block text-sm font-medium text-gray-700">
+                                        To‘liq Ism
+                                    </label>
+                                    <div className="relative">
+                                        <Input
+                                            id="fullname"
+                                            name="fullname"
+                                            type="text"
+                                            placeholder="Ism va familiyangiz"
+                                            className="mt-1 pl-10"
+                                            value={formData.fullname}
+                                            onChange={handleInputChange}
+                                            disabled={isLoading}
+                                            aria-describedby={errors.fullname ? "fullname-error" : undefined}
+                                        />
+                                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    </div>
+                                    {errors.fullname && (
+                                        <p id="fullname-error" className="text-red-500 text-sm mt-1">
+                                            {errors.fullname}
+                                        </p>
+                                    )}
                                 </div>
-                                {errors.fullname && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.fullname}</p>
-                                )}
-                            </div>
 
-                            <div>
-                                <label
-                                    htmlFor="email"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Elektron Pochta
-                                </label>
-                                <div className="relative">
-                                    <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        placeholder="Email manzilingiz"
-                                        className="mt-1 pl-10"
-                                        value={formData.email}
-                                        onChange={handleInputChange}
-                                    />
-                                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                        Elektron Pochta
+                                    </label>
+                                    <div className="relative">
+                                        <Input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            placeholder="Email manzilingiz"
+                                            className="mt-1 pl-10"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            disabled={isLoading}
+                                            aria-describedby={errors.email ? "email-error" : undefined}
+                                        />
+                                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    </div>
+                                    {errors.email && (
+                                        <p id="email-error" className="text-red-500 text-sm mt-1">{errors.email}</p>
+                                    )}
                                 </div>
-                                {errors.email && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                                )}
-                            </div>
 
-                            <div>
-                                <label
-                                    htmlFor="phone"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Telefon Raqami
-                                </label>
-                                <div className="relative">
-                                    <Input
-                                        id="phone"
-                                        name="phone"
-                                        type="tel"
-                                        placeholder="+998-91-600-83-00"
-                                        className="mt-1 pl-10"
-                                        value={formData.phone}
-                                        onChange={handleInputChange}
-                                    />
-                                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <div>
+                                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                                        Telefon Raqami
+                                    </label>
+                                    <div className="relative">
+                                        <Input
+                                            id="phone"
+                                            name="phone"
+                                            type="tel"
+                                            placeholder="+998-91-600-83-00"
+                                            className="mt-1 pl-10"
+                                            value={formData.phone}
+                                            onChange={handleInputChange}
+                                            disabled={isLoading}
+                                            aria-describedby={errors.phone ? "phone-error" : undefined}
+                                        />
+                                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    </div>
+                                    {errors.phone && (
+                                        <p id="phone-error" className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                                    )}
                                 </div>
-                                {errors.phone && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                                )}
-                            </div>
 
-                            <div>
-                                <label
-                                    htmlFor="password"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Parol
-                                </label>
-                                <div className="relative">
-                                    <Input
-                                        id="password"
-                                        name="password"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="Parolingiz"
-                                        className="mt-1 pl-10 pr-10"
-                                        value={formData.password}
-                                        onChange={handleInputChange}
-                                    />
-                                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                <div>
+                                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                        Parol
+                                    </label>
+                                    <div className="relative">
+                                        <Input
+                                            id="password"
+                                            name="password"
+                                            type={showPassword ? "text" : "password"}
+                                            placeholder="Parolingiz"
+                                            className="mt-1 pl-10 pr-10"
+                                            value={formData.password}
+                                            onChange={handleInputChange}
+                                            disabled={isLoading}
+                                            aria-describedby={errors.password ? "password-error" : undefined}
+                                        />
+                                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                            aria-label={showPassword ? "Parolni yashirish" : "Parolni ko'rsatish"}
+                                        >
+                                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                        </button>
+                                    </div>
+                                    {errors.password && (
+                                        <p id="password-error" className="text-red-500 text-sm mt-1">
+                                            {errors.password}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label
+                                        htmlFor="confirm-password"
+                                        className="block text-sm font-medium text-gray-700"
                                     >
-                                        {showPassword ? (
-                                            <EyeOff className="h-5 w-5" />
-                                        ) : (
-                                            <Eye className="h-5 w-5" />
-                                        )}
-                                    </button>
+                                        Parolni Tasdiqlash
+                                    </label>
+                                    <div className="relative">
+                                        <Input
+                                            id="confirm-password"
+                                            name="confirmPassword"
+                                            type={showConfirmPassword ? "text" : "password"}
+                                            placeholder="Parolni qayta kiriting"
+                                            className="mt-1 pl-10 pr-10"
+                                            value={formData.confirmPassword}
+                                            onChange={handleInputChange}
+                                            disabled={isLoading}
+                                            aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
+                                        />
+                                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                            aria-label={showConfirmPassword ? "Parolni yashirish" : "Parolni ko'rsatish"}
+                                        >
+                                            {showConfirmPassword ? (
+                                                <EyeOff className="h-5 w-5" />
+                                            ) : (
+                                                <Eye className="h-5 w-5" />
+                                            )}
+                                        </button>
+                                    </div>
+                                    {errors.confirmPassword && (
+                                        <p id="confirm-password-error" className="text-red-500 text-sm mt-1">
+                                            {errors.confirmPassword}
+                                        </p>
+                                    )}
                                 </div>
-                                {errors.password && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                                )}
-                            </div>
 
-                            <div>
-                                <label
-                                    htmlFor="confirm-password"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Parolni Tasdiqlash
-                                </label>
-                                <div className="relative">
-                                    <Input
-                                        id="confirm-password"
-                                        name="confirmPassword"
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        placeholder="Parolni qayta kiriting"
-                                        className="mt-1 pl-10 pr-10"
-                                        value={formData.confirmPassword}
-                                        onChange={handleInputChange}
+                                <div className="flex items-center">
+                                    <Checkbox
+                                        id="terms"
+                                        checked={agreeToTerms}
+                                        onCheckedChange={(checked) => setAgreeToTerms(!!checked)}
+                                        aria-label="Foydalanish shartlari va maxfiylik siyosatiga rozilik"
                                     />
-                                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                    >
-                                        {showConfirmPassword ? (
-                                            <EyeOff className="h-5 w-5" />
-                                        ) : (
-                                            <Eye className="h-5 w-5" />
-                                        )}
-                                    </button>
+                                    <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
+                                        <Link href="/terms" className="text-emerald-600 hover:underline">
+                                            Foydalanish shartlari
+                                        </Link>{" "}
+                                        va{" "}
+                                        <Link href="/privacy" className="text-emerald-600 hover:underline">
+                                            Maxfiylik siyosati
+                                        </Link>{" "}
+                                        bilan roziman
+                                    </label>
                                 </div>
-                                {errors.confirmPassword && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
-                                )}
+
+                                <Button
+                                    type="submit"
+                                    disabled={isLoading || !agreeToTerms}
+                                    className="w-full bg-amber-600 hover:bg-amber-700 text-white border border-amber-500/50 disabled:opacity-50"
+                                >
+                                    {isLoading ? (
+                                        <Loader2 className="animate-spin w-5 h-5" />
+                                    ) : (
+                                        <>
+                                            <User className="mr-2 h-5 w-5" /> Ro‘yxatdan O‘tish
+                                        </>
+                                    )}
+                                </Button>
                             </div>
+                        </form>
 
-                            <div className="flex items-center">
-                                <Checkbox
-                                    id="terms"
-                                    checked={agreeTerms}
-                                    onCheckedChange={(checked) => setAgreeTerms(!!checked)}
-                                />
-                                <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
-                                    <Link href="/terms" className="text-emerald-600 hover:underline">
-                                        Foydalanish shartlari
-                                    </Link>{" "}
-                                    va{" "}
-                                    <Link href="/privacy" className="text-emerald-600 hover:underline">
-                                        Maxfiylik siyosati
-                                    </Link>{" "}
-                                    bilan roziman
-                                </label>
-                            </div>
-
-                            <Button
-                                onClick={handleSubmit}
-                                disabled={!agreeTerms || isLoading}
-                                className="w-full cursor-pointer bg-amber-600 hover:bg-amber-700 text-white border border-amber-500/50 disabled:opacity-50"
-                            >
-                                {isLoading ? (
-                                    "Yuklanmoqda..."
-                                ) : (
-                                    <>
-                                        <User className="mr-2 h-5 w-5" /> Ro‘yxatdan O‘tish
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-
-                        <p className="text-center text-sm text-gray-600">
+                        <p className="text-center text-sm text-gray-600 mt-4">
                             Hisobingiz bormi?{" "}
-                            <Link
-                                href="/signin"
-                                className="text-emerald-600 hover:underline font-semibold"
-                            >
+                            <Link href="/signin" className="text-emerald-600 hover:underline font-semibold">
                                 Kirish
                             </Link>
                         </p>

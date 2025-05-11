@@ -13,7 +13,7 @@ const questionSchema = new Schema({
       validator: function (arr) {
         return arr.length >= 2;
       },
-      message: 'There must be at least two answers.'
+      message: `Javoblar kamida 2 ta bo'lish shart`
     }
   },
   correctAnswer: {
@@ -23,13 +23,13 @@ const questionSchema = new Schema({
       validator: function (val) {
         return this.answers.includes(val);
       },
-      message: 'Correct answer must be one of the provided answers.'
+      message: "Tog'ri javob faqat bitta bo'lishi mumkun"
     }
   },
   difficulty: {
     type: String,
     enum: ['easy', 'medium', 'hard'],
-    default: 'medium'
+    default: 'easy'
   },
 }, {
   timestamps: true
