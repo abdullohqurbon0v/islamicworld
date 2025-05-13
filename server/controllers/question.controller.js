@@ -108,6 +108,14 @@ class QuestionController {
             });
         }
     }
+
+    async gameOver() {
+        try {
+
+        } catch (error) {
+
+        }
+    }
 }
 
 module.exports = new QuestionController();

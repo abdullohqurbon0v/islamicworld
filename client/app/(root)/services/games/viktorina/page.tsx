@@ -37,8 +37,8 @@ const QuranViktorinaPage = () => {
     const [correctAnswerShown, setCorrectAnswerShown] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [startGame, setStartGame] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(15); // Timer state (15 seconds)
-    const [timedOut, setTimedOut] = useState(false); // Track if game ended due to timeout
+    const [timeLeft, setTimeLeft] = useState(15);
+    const [timedOut, setTimedOut] = useState(false);
 
     useEffect(() => {
         const getQuestion = async () => {
@@ -59,8 +59,8 @@ const QuranViktorinaPage = () => {
                 setSelectedAnswer('');
                 setDisabled(false);
                 setCorrectAnswerShown(false);
-                setTimeLeft(15); // Reset timer for new question
-                setTimedOut(false); // Reset timeout flag
+                setTimeLeft(15);
+                setTimedOut(false);
             } catch (error) {
                 console.log(error);
             }
@@ -71,24 +71,22 @@ const QuranViktorinaPage = () => {
         }
     }, [questionIdx, gameOver]);
 
-    // Timer effect
     useEffect(() => {
-        if (!question || gameOver || disabled) return; // Don't run timer if no question, game over, or answer selected
-
+        if (!question || gameOver || disabled || !startGame) return;
         const timer = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
                     clearInterval(timer);
                     setGameOver(true);
-                    setTimedOut(true); // Mark as timed out
+                    setTimedOut(true);
                     return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
 
-        return () => clearInterval(timer); // Cleanup on unmount or when question changes
-    }, [question, gameOver, disabled]);
+        return () => clearInterval(timer);
+    }, [question, gameOver, disabled, startGame]);
 
     async function onSelectAnswer(answer: string) {
         setDisabled(true);
@@ -121,7 +119,7 @@ const QuranViktorinaPage = () => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-900">
                 <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg text-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-green-500 to-emerald-700 rounded-t-2xl"></div>
+                    <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-green-400 via-green-500 to-emerald-700 rounded-t-2xl"></div>
                     <h1 className="text-4xl md:text-5xl font-bold text-emerald-900 mb-4">
                         Qur‘on Vikto‘rinasiga Xush Kelibsiz!
                     </h1>
@@ -158,14 +156,14 @@ const QuranViktorinaPage = () => {
     }
 
     if (gameOver) {
-        const correctAnswers = questionIdx - 1; // Number of correct answers before failing
+        const correctAnswers = questionIdx - 1;
         const difficultyReached =
             correctAnswers <= 4 ? "Oson" : correctAnswers <= 8 ? "O‘rta" : "Qiyin";
 
         return (
-            <div className="min-h-screen flex items-center justify-center bg-red-100 text-gray-900">
+            <div className="min-h-screen flex items-center justify-center bg-blue-400 text-gray-900">
                 <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg text-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-green-500 to-emerald-700 rounded-t-2xl"></div>
+                    <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-green-500 via-green-500 to-emerald-700 rounded-t-2xl"></div>
                     <h2 className="text-4xl md:text-5xl font-bold text-red-600 mb-4">
                         O‘yin Tugadi!
                     </h2>
